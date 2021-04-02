@@ -127,6 +127,143 @@ class Graf(object):
     def addArraySimpul(self,simpul):
         self.arraySimpul.append(simpul)
 
+#Kelas untuk menyimpan nama dan nilai g,h,f
+class Simpul():
+    def __init__(self, parent=None, name=None):
+        #nilai parent dan position
+        self.parent = parent
+        self.name = name
+        
+        self.g = 0
+        self.h = 0
+        self.f = 0
+
+    def __eq__(self,other):
+        return self.name == other.name
+
+# take f for sort
+def takeF(elem):
+    return elem.f
+ 
+#Algoritma A* untuk mencari rute
+def astar(graf,start,end):
+    
+    #Buat simpul awal dan akhir
+    start_node = Simpul(None,start)
+    start_node.g = start_node.h = start_node.f =0
+    end_node = Simpul(None,end)
+    end_node.g = end_node.h = end_node.f =0
+    
+    #inisialisasi open dan closed list
+    #open: live node, closed: expanded node
+    open_list = []
+    closed_list = []
+    
+    #tambahkan start node
+    open_list.append(start_node)
+    
+    #buat list of simpul
+    list_simpul = graf.getSimpul("Simpul")
+    
+    #indeks untuk start dan elnd
+    start_index = list_simpul.index(start)
+    end_index = list_simpul.index(end)
+    
+    #debug
+    counter=1
+    
+    #loop sampai mencapai end
+    while len(open_list) > 0:
+        
+        open_list.sort(key=takeF)
+        
+        #debug
+        print("Iterasi ke-"+str(counter))
+        counter+=1
+        
+        print("OpenList:")
+        for x in open_list:
+            print(x.name+":"+str(x.f),end=" ")
+        print("")
+
+        print("ClosedList:")
+        for x in closed_list:
+            print(x.name,end=" ")
+        print("")
+        
+        #Ambil curr node dengan f terkecil
+        current_node = open_list[0]
+        current_index = 0
+        for index, item in enumerate(open_list):
+            if item.f < current_node.f:
+                current_node = item
+                current_index = index
+        
+        #debug
+        print ("Index:"+ str(current_index))
+        print("Current node:"+current_node.name)
+        
+        #Pop dan masukkan ke closed list
+        open_list.pop(current_index)
+        closed_list.append(current_node)
+        
+        #Menemukan goal, catat pathnya
+        if current_node == end_node:
+            path = []
+            current = current_node
+            while current is not None:
+                path.append(current.name)
+                current = current.parent
+            return path[::1] #path adalah array yang direversed
+        
+        #Generate children
+        list_children = graf.dictTetangga[current_node.name]
+        
+        children = []
+        for child_element in list_children:
+            #Buat simpul baru
+            new_node = Simpul(current_node.name,child_element)
+            #Append
+            children.append(new_node)
+        
+        print("List Children:")
+        for child in children:
+            print(child.name,end=" ")
+        print("")
+        
+        #Loop untuk setiap children
+        for child in children:
+            
+            #debug
+            #print("Nama child" + child.name)
+            
+            #Cek child apakah ada di closed list (sudah expanded)
+            for closed_child in closed_list:
+                if child.name == closed_child.name:
+                    #debug
+                    #print ("SKIP1")
+                    continue
+            
+            #Mengkalkulasikan nilai f dari nilai g dan h
+            child_index = list_simpul.index(child.name)
+            
+            #dari matrix real
+            child.g = graf.real_distance_matrix[child_index][start_index] 
+            #dari matrix euclidean distance
+            child.h = graf.distance_matrix[child_index][end_index]
+            #f didapat dari g dan h
+            child.f = child.g + child.h
+            
+            #Cek child apakah ada di open list (di live node) dan g lebih besar
+            for open_node in open_list:
+                if child.name == open_node.name and child.g >= open_node.g:
+                    #debug
+                    #print ("SKIP2")
+                    continue
+            
+            #Tambahkan child ke open list (live node)
+            open_list.append(child)
+
 # INISIALISASI
 # filename = input("Masukkan nama file kordinat (filename.txt): ")
 # filematrix = input("Masukkan nama file matrix (filename.txt): ")
@@ -163,9 +300,16 @@ for item in tempArr:
 graf.setMatrix(tempMatrix,"Adj")
 graf.setMatrix(tempEucledean,"Euc")
 graf.setMatrix(tempReal,"Real")
-print("======= MATRIX REAL=======")
-graf.printMatrix("Real")
-print("====== INI SIMPUL========")
-graf.printSimpul("Simpul")
-print("====== KOORDINATNYA======")
-graf.printSisi("Sisi")
+
+#Print
+# print("======= MATRIX REAL=======")
+# graf.printMatrix("Real")
+# print("====== INI SIMPUL========")
+# graf.printSimpul("Simpul")
+# print("====== KOORDINATNYA======")
+# graf.printSisi("Sisi")
+
+#menerima masukan astar(graf,start,end)
+print(astar(graf,"Depan ITB", "Babakan Siliwangi"))
+
+
