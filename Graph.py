@@ -140,11 +140,14 @@ class Simpul():
 
     def __eq__(self,other):
         return self.name == other.name
+    
+    def __lt__(self,other):
+        return self.f < other.f
 
 # take f for sort
 def takeF(elem):
     return elem.f
- 
+
 #Algoritma A* untuk mencari rute
 def astar(graf,start,end):
     
@@ -175,8 +178,6 @@ def astar(graf,start,end):
     #loop sampai mencapai end
     while len(open_list) > 0:
         
-        open_list.sort(key=takeF)
-        
         #debug
         print("Iterasi ke-"+str(counter))
         counter+=1
@@ -194,10 +195,23 @@ def astar(graf,start,end):
         #Ambil curr node dengan f terkecil
         current_node = open_list[0]
         current_index = 0
-        for index, item in enumerate(open_list):
-            if item.f < current_node.f:
+        for item in open_list:
+            #debug
+            #print("Nilai item:"+str(item.f))
+            #print("Nilai cur:"+str(current_node.f))
+            if (item < current_node):
+                #debug
+                print("Masuk sini")
                 current_node = item
                 current_index = index
+            else:
+                #debug
+                print("Masuk else")
+                
+#         for index, item in enumerate(open_list):
+#             if item.f < current_node.f:
+#                 current_node = item
+#                 current_index = index
         
         #debug
         print ("Index:"+ str(current_index))
@@ -222,7 +236,7 @@ def astar(graf,start,end):
         children = []
         for child_element in list_children:
             #Buat simpul baru
-            new_node = Simpul(current_node.name,child_element)
+            new_node = Simpul(current_node,child_element)
             #Append
             children.append(new_node)
         
@@ -233,16 +247,19 @@ def astar(graf,start,end):
         
         #Loop untuk setiap children
         for child in children:
-            
+            skip = False
             #debug
             #print("Nama child" + child.name)
             
             #Cek child apakah ada di closed list (sudah expanded)
             for closed_child in closed_list:
-                if child.name == closed_child.name:
+                if child == closed_child:
                     #debug
                     #print ("SKIP1")
+                    skip = True
                     continue
+            if(skip):
+                continue
             
             #Mengkalkulasikan nilai f dari nilai g dan h
             child_index = list_simpul.index(child.name)
@@ -256,13 +273,17 @@ def astar(graf,start,end):
             
             #Cek child apakah ada di open list (di live node) dan g lebih besar
             for open_node in open_list:
-                if child.name == open_node.name and child.g >= open_node.g:
+                if child == open_node and child.g >= open_node.g:
                     #debug
                     #print ("SKIP2")
+                    skip = True
                     continue
+            if(skip):
+                continue
             
             #Tambahkan child ke open list (live node)
             open_list.append(child)
+            open_list.sort(key=takeF)
 
 # INISIALISASI
 # filename = input("Masukkan nama file kordinat (filename.txt): ")
@@ -310,6 +331,6 @@ graf.setMatrix(tempReal,"Real")
 # graf.printSisi("Sisi")
 
 #menerima masukan astar(graf,start,end)
-print(astar(graf,"Depan ITB", "Babakan Siliwangi"))
+print(astar(graf,"Tirta Anugrah", "Babakan Siliwangi"))
 
 
