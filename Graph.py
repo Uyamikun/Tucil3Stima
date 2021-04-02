@@ -142,11 +142,11 @@ class Simpul():
         return self.name == other.name
     
     def __lt__(self,other):
-        return self.f < other.f
+        return float(self.f) < float(other.f)
 
 # take f for sort
 def takeF(elem):
-    return elem.f
+    return float(elem.f)
 
 #Algoritma A* untuk mencari rute
 def astar(graf,start,end):
@@ -196,23 +196,10 @@ def astar(graf,start,end):
         current_node = open_list[0]
         current_index = 0
         for item in open_list:
-            #debug
-            #print("Nilai item:"+str(item.f))
-            #print("Nilai cur:"+str(current_node.f))
             if (item < current_node):
-                #debug
-                print("Masuk sini")
                 current_node = item
                 current_index = index
-            else:
-                #debug
-                print("Masuk else")
                 
-#         for index, item in enumerate(open_list):
-#             if item.f < current_node.f:
-#                 current_node = item
-#                 current_index = index
-        
         #debug
         print ("Index:"+ str(current_index))
         print("Current node:"+current_node.name)
@@ -226,9 +213,11 @@ def astar(graf,start,end):
             path = []
             current = current_node
             while current is not None:
+                #Debug
+                #print("Muncul")
                 path.append(current.name)
                 current = current.parent
-            return path[::1] #path adalah array yang direversed
+            return path[::-1] #path adalah array yang direversed
         
         #Generate children
         list_children = graf.dictTetangga[current_node.name]
@@ -265,9 +254,9 @@ def astar(graf,start,end):
             child_index = list_simpul.index(child.name)
             
             #dari matrix real
-            child.g = graf.real_distance_matrix[child_index][start_index] 
+            child.g = float(graf.real_distance_matrix[child_index][start_index]) 
             #dari matrix euclidean distance
-            child.h = graf.distance_matrix[child_index][end_index]
+            child.h = float(graf.distance_matrix[child_index][end_index])
             #f didapat dari g dan h
             child.f = child.g + child.h
             
@@ -331,6 +320,7 @@ graf.setMatrix(tempReal,"Real")
 # graf.printSisi("Sisi")
 
 #menerima masukan astar(graf,start,end)
-print(astar(graf,"Tirta Anugrah", "Babakan Siliwangi"))
+print(astar(graf,"Tirta Anugrah", "Depan ITB"))
+print(astar(graf,"Tirta Anugrah", "MCD Dago"))
 
 
