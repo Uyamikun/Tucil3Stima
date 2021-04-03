@@ -1,3 +1,4 @@
+import math
 class Graf(object):
     def __init__(self, size, dictgraf = None, dictTetangga = None):
         #atribut
@@ -73,7 +74,10 @@ class Graf(object):
             return list(self.dictgraf.values())
         elif(target == "Tetangga"):
             return list(self.dictTetangga.values())
-
+    def getX(self,simpul):
+        return float(self.dictgraf[simpul][0])
+    def getY(self,simpul):
+        return float(self.dictgraf[simpul][1])
     #method size
     def getSize(self):
         return self.size
@@ -126,7 +130,26 @@ class Graf(object):
     #method array Tetangga
     def addArraySimpul(self,simpul):
         self.arraySimpul.append(simpul)
+                
 
+    def haversineEuclidean(self,simpul1,simpul2):
+        x1 = self.getX(simpul1)
+        y1 = self.getY(simpul1)
+        x2 = self.getX(simpul2)
+        y2 = self.getY(simpul2)
+        selisihY = (y2 - y1) * math.pi / 180.0
+        selisihX = (x2 - x1 ) * math.pi / 180.0
+        # convert to radians
+        y1 = (y1) * math.pi / 180.0
+        y2 = (y2) * math.pi / 180.0
+    
+        # apply formulae
+        a = (pow(math.sin(selisihY / 2), 2) + 
+            pow(math.sin(selisihX / 2), 2) * 
+                math.cos(y1) * math.cos(y2));
+        rad = 6371000
+        c = 2 * math.asin(math.sqrt(a))
+        return rad * c
 #Kelas untuk menyimpan nama dan nilai g,h,f
 class Simpul():
     def __init__(self, parent=None, name=None):
@@ -279,7 +302,6 @@ def astar(graf,start,end):
 # filematrix = input("Masukkan nama file matrix (filename.txt): ")
 f = open("map.txt", "r")
 fm = open("matrix.txt", "r")
-fr = open("euclidean.txt", "r") #h(n)
 fg = open("jarakreal.txt","r") #g(n)
 tempArr = []
 tempMatrix = []
@@ -289,10 +311,9 @@ for item in f:
     tempArr.append(item.rstrip("\n").rsplit(','))
 for item in fm:
     tempMatrix.append(item.rstrip("\n"))
-for item in fr:
-    tempEucledean.append(item.rstrip("\n").rsplit(" "))
 for item in fg:
     tempReal.append(item.rstrip("\n").rsplit(" "))
+
 
 # MAIN DRIVER
 graf = Graf(int(tempArr[0][0]))
@@ -305,22 +326,24 @@ for item in tempArr:
             graf.addSimpul(item[i],"Tetangga")
             graf.addSisi(item[0],item[i],"Sisi")
             graf.addSisi(item[1],item[i],"Sisi")
-        
 
-graf.setMatrix(tempMatrix,"Adj")
-graf.setMatrix(tempEucledean,"Euc")
+
+tempListEuc = []
+for item in tempArr:
+    for item2 in tempArr:
+        if(item[2] != item2[2]):
+            hasil = graf.haversineEuclidean(item[2],item2[2])
+            tempListEuc.append(hasil)
+        else:
+            tempListEuc.append(0)
+    tempEucledean.append(tempListEuc)
+    tempListEuc = []
+
+graf.setMatrix(tempMatrix,"Adj") 
+
+graf.setMatrix(tempEucledean,"Euc")#h(n)
 graf.setMatrix(tempReal,"Real")
 
-#Print
-# print("======= MATRIX REAL=======")
-# graf.printMatrix("Real")
-# print("====== INI SIMPUL========")
-# graf.printSimpul("Simpul")
-# print("====== KOORDINATNYA======")
-# graf.printSisi("Sisi")
 
-#menerima masukan astar(graf,start,end)
-print(astar(graf,"Tirta Anugrah", "Depan ITB"))
-print(astar(graf,"Tirta Anugrah", "MCD Dago"))
-
+print(astar(graf,"Tirta Anugrah", "Babakan Siliwangi"))
 
