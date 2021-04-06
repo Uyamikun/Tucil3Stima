@@ -11,7 +11,7 @@
 
 ## Dibuat
 Created by:
-Nabil Nabhigah (13519168)
+Nabil Nabighah (13519168)
 Muhammad Furqon (13519184)
 
 ## General info
