@@ -18,14 +18,14 @@ Muhammad Furqon (13519184)
 Algoritma A star dengan visualisasi map dengan ipyleaflet pada jupyter notebook
 
 ## Setup
-*Install anaconda yang telah dilengkapi dengan jupyter notebook
-*Install dependencies dalam anaconda dengan
+* Install anaconda yang telah dilengkapi dengan jupyter notebook
+* Install dependencies dalam anaconda dengan
 '$ conda install -c conda-forge ipyleaflet'
-*Buka file TucilStima.ipynb
-*Pastikan cell pertama untuk instalasi conda package dalam jupyter kernel dapat berjalan
+* Buka file TucilStima.ipynb
+* Pastikan cell pertama untuk instalasi conda package dalam jupyter kernel dapat berjalan
 'import sys'
 '!conda install --yes --prefix {sys.prefix} ipyleaflet'
-*Run semua cell dan pada cell terakhir program utama dapat digunakan
+* Run semua cell dan pada cell terakhir program utama dapat digunakan
 
 ## Penggunaan
 Cara menggunakan
