@@ -30,6 +30,7 @@ Algoritma A star dengan visualisasi map dengan ipyleaflet pada jupyter notebook
 ## Penggunaan
 Cara menggunakan
 * Lakukan setup dan pastikan ipyleaflet dapat berfungsi
+* Copy file yang ingin dibuka ke folder yang berisi .ipynb
 * Run jupyter notebook
 * Saat diminta memasukkan nama file, masukkan map.txt, matrix.txt, dan jarakreal.txt sesuai kebutuhan
 * Saat visualisasi berhasil dapat menekan marker pada peta sebagai simpul awal, lalu menekan simpul lain sebagai simpul akhir
